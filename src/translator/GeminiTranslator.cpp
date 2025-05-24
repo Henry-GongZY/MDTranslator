@@ -4,12 +4,16 @@
 
 #include "../../include/translator/GeminiTranslator.h"
 
+std::string parse_json(std::string response) {
+    return {};
+}
+
 static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
     ((std::string*)userp)->append((char*)contents, size * nmemb);
     return size * nmemb;
 }
 
-GeminiTranslator::GeminiTranslator(std::string api_key): api_key(std::move(api_key)) {
+GeminiTranslator::GeminiTranslator(std::string apikey): api_key(std::move(apikey)) {
     this->curl_handle = curl_easy_init();
     if (!this->curl_handle) {
         std::cerr << "Failed to initialize CURL\n";
@@ -25,11 +29,17 @@ GeminiTranslator::GeminiTranslator(std::string api_key): api_key(std::move(api_k
 
 std::string GeminiTranslator::translate(std::string input) {
 
-    std::string json_payload = R"({"contents":[{"parts":[{"text":")"
-                               + input
-                               + R"("}]}]})";
-
-    std::cout << json_payload<<std::endl;
+    std::string json_payload = std::format(R"({{
+    "contents": [
+      {{
+        "parts": [
+          {{
+            "text": "{}"
+          }}
+        ]
+      }}
+    ]
+    }})", input);
 
     std::string response;
     curl_easy_setopt(this->curl_handle, CURLOPT_POSTFIELDS, json_payload.c_str());
@@ -47,10 +57,6 @@ std::string GeminiTranslator::translate(std::string input) {
     }
 
     return response;
-}
-
-std::string GeminiTranslator::parse_json(std::string response) {
-    return {};
 }
 
 GeminiTranslator::~GeminiTranslator() {

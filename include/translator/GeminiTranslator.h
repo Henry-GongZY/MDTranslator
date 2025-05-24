@@ -9,9 +9,9 @@
 
 class GeminiTranslator: public BaseTranslator {
 public:
-    GeminiTranslator(std::string);
+    explicit GeminiTranslator(std::string);
     std::string translate(std::string) override;
-    ~GeminiTranslator();
+    ~GeminiTranslator() override;
 
 private:
     std::string api_key;
@@ -19,7 +19,6 @@ private:
     struct curl_slist* headers = nullptr;
     inline static std::string url = "https://generativelanguage.googleapis.com/v1beta/models/"
                                    "gemini-2.0-flash:generateContent?key=";
-    std::string parse_json(std::string);
 };
 
 
